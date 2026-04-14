@@ -42,10 +42,12 @@ function App() {
               <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black font-black text-lg rotate-12 group-hover:rotate-0 transition-transform duration-500">VH</div>
               <div className="absolute -inset-1 bg-accent/20 blur-md rounded-xl -z-10 group-hover:bg-accent/40 transition-all" />
             </div>
-            <span className="text-xl font-black tracking-tighter text-white uppercase">Vibe Hub</span>
+            <span className="text-xl font-black tracking-tighter uppercase sm:block hidden">
+              <span className="text-white">Vibe</span>
+              <span className="text-accent ml-2 text-neon">Code Hub</span>
+            </span>
           </a>
         </div>
-        <button className="bg-white text-black text-xs font-black uppercase px-6 py-2.5 rounded-xl hover:bg-accent hover:text-white transition-all shadow-lg">Acessar Beta</button>
       </header>
 
       <main>
@@ -56,9 +58,14 @@ function App() {
         </div>
       </main>
 
-      <footer className="relative py-20 px-6 border-t border-white/5 text-center text-slate-600 text-[10px] font-mono uppercase tracking-[0.3em]">
-        <span>SYS_VER_OCTOKIT_DISCOVERY_4.14.26</span>
-        <div className="mt-4">Vibe Coding Hub © 2026</div>
+      <footer className="relative py-20 px-6 border-t border-white/5 text-center text-slate-500 text-[10px] font-mono uppercase tracking-[0.3em]">
+        <div className="mb-4">SYS_VER_OCTOKIT_DISCOVERY_4.14.26</div>
+        <div>
+          Desenvolvido pelo time{" "}
+          <a href="http://oqconecta.tech/" target="_blank" className="text-accent hover:text-white transition-colors underline underline-offset-4">
+            oqconecta.tech
+          </a>
+        </div>
       </footer>
     </div>
   );
