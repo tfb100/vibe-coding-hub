@@ -15,3 +15,19 @@ export interface StackSection {
   icon: string;
   items: StackItem[];
 }
+
+// Tipos para tradução
+export interface TranslationCache {
+  [repoName: string]: {
+    original: string;
+    translated: string;
+    timestamp: number;
+  };
+}
+
+export interface DiscoveryItem extends StackItem {
+  stars: number;
+  translatedDesc?: string;
+  translationLang?: string;
+  originalLang?: string;
+}
