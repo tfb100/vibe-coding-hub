@@ -20,7 +20,7 @@ export interface VibeTrend {
 
 // DiscoveryItem já está definido em types/stack.ts com campos de tradução
 
-const CACHE_KEY = 'vibe_hub_trends_cache_v3';
+const CACHE_KEY = 'vibe_hub_trends_cache_v4';
 const CACHE_TTL = 1000 * 60 * 60 * 2; // 2 horas
 const DISCOVERY_LIMIT = 12; // Expandido de 6 para 12 repositórios
 
