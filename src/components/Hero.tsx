@@ -34,7 +34,7 @@ const Hero: React.FC = () => {
             animate={{ y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            A Próxima Vibe do
+            Descubra. Experimente.
           </motion.span>
           <br />
           <motion.span 
@@ -43,7 +43,7 @@ const Hero: React.FC = () => {
             animate={{ y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            Desenvolvimento.
+            Evolua.
           </motion.span>
         </h1>
         
@@ -53,8 +53,7 @@ const Hero: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
         >
-          Uma curadoria brutalista e elegante das ferramentas que estão <br className="hidden md:block" />
-          moldando o futuro da engenharia de software e IA.
+          Curadoria das ferramentas que estão moldando o futuro do código e da IA.
         </motion.p>
 
         <motion.div 
