@@ -9,10 +9,10 @@ const Hero: React.FC = () => {
   const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
   return (
-    <section className="relative min-h-[110vh] flex flex-col items-center justify-center px-4 overflow-hidden pt-20">
+    <section className="relative min-h-[100vh] md:min-h-[110vh] flex flex-col items-center justify-center px-4 sm:px-6 overflow-hidden pt-28 md:pt-20">
       {/* Parallax Background Decorations */}
-      <motion.div style={{ y: y1 }} className="absolute top-[20%] left-[10%] w-[400px] h-[400px] bg-accent/10 blur-[120px] rounded-full -z-10 animate-float" />
-      <motion.div style={{ y: y2, animationDelay: '2s' }} className="absolute bottom-[20%] right-[10%] w-[350px] h-[350px] bg-primary/10 blur-[100px] rounded-full -z-10 animate-float" />
+      <motion.div style={{ y: y1 }} className="absolute top-[20%] left-[10%] w-[200px] md:w-[400px] h-[200px] md:h-[400px] bg-accent/10 blur-[60px] md:blur-[120px] rounded-full -z-10 animate-float" />
+      <motion.div style={{ y: y2, animationDelay: '2s' }} className="absolute bottom-[20%] right-[10%] w-[175px] md:w-[350px] h-[175px] md:h-[350px] bg-primary/10 blur-[50px] md:blur-[100px] rounded-full -z-10 animate-float" />
       
       {/* Text Reveal Headline */}
       <div className="max-w-6xl w-full text-center relative z-20">
@@ -27,7 +27,7 @@ const Hero: React.FC = () => {
           <div className="w-1 h-1 rounded-full bg-primary animate-pulse ml-2" />
         </motion.div>
 
-        <h1 className="text-7xl md:text-9xl font-black font-sans tracking-tight mb-8 leading-[0.9] text-white overflow-hidden">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black font-sans tracking-tight mb-6 md:mb-8 leading-[0.9] text-white overflow-hidden">
           <motion.span 
             className="inline-block text-reveal"
             initial={{ y: "100%" }}
@@ -48,7 +48,7 @@ const Hero: React.FC = () => {
         </h1>
         
         <motion.p 
-          className="text-xl md:text-2xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed font-sans font-medium"
+          className="text-base sm:text-lg md:text-2xl text-slate-400 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed font-sans font-medium px-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
@@ -65,7 +65,7 @@ const Hero: React.FC = () => {
         >
           <motion.a 
             href="#hub" 
-            className="btn-github-primary flex items-center gap-3 group relative px-10 py-5 text-lg overflow-hidden"
+            className="btn-github-primary flex items-center gap-3 group relative px-6 py-4 md:px-10 md:py-5 text-base md:text-lg overflow-hidden"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -78,7 +78,7 @@ const Hero: React.FC = () => {
           <motion.a 
             href="https://github.com" 
             target="_blank" 
-            className="btn-github-outline flex items-center gap-3 px-10 py-5 text-lg glass-premium"
+            className="btn-github-outline flex items-center gap-3 px-6 py-4 md:px-10 md:py-5 text-base md:text-lg glass-premium"
             whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
             whileTap={{ scale: 0.95 }}
           >

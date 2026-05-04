@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Outfit:wght@600;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "@fontsource-variable/geist";
@@ -83,5 +83,28 @@
 
   .mask-radial {
     mask-image: radial-gradient(circle at center, black, transparent 80%);
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-pulse,
+    .animate-bounce {
+      animation: none !important;
+    }
+    .spotlight-glow {
+      display: none;
+    }
+  }
+
+  /* Mobile performance: reduce expensive effects */
+  @media (max-width: 767px) {
+    .glass-premium {
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+    .text-neon {
+      text-shadow: none;
+    }
   }
 }

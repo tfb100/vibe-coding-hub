@@ -35,12 +35,12 @@ function App() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#020202] via-transparent to-[#020202]/50" />
       </div>
 
-      <header className="fixed top-0 left-1/2 -translate-x-1/2 mt-6 z-50 w-[95%] max-w-7xl glass-premium rounded-2xl py-3 px-6 flex items-center justify-between border-white/5 shadow-2xl">
+      <header className="fixed top-0 left-1/2 -translate-x-1/2 mt-3 md:mt-6 z-50 w-[95%] max-w-7xl glass-premium rounded-xl md:rounded-2xl py-2 md:py-3 px-4 md:px-6 flex items-center justify-between border-white/5 shadow-2xl">
         <div className="flex items-center gap-10">
           <a href="/" className="group flex items-center gap-3">
             <div className="relative">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black font-black text-lg rotate-12 group-hover:rotate-0 transition-transform duration-500">VH</div>
-              <div className="absolute -inset-1 bg-accent/20 blur-md rounded-xl -z-10 group-hover:bg-accent/40 transition-all" />
+              <div className="w-8 h-8 md:w-10 md:h-10 bg-white rounded-lg md:rounded-xl flex items-center justify-center text-black font-black text-sm md:text-lg rotate-12 group-hover:rotate-0 transition-transform duration-500">VH</div>
+              <div className="absolute -inset-1 bg-accent/20 blur-md rounded-lg md:rounded-xl -z-10 group-hover:bg-accent/40 transition-all" />
             </div>
             <span className="text-xl font-black tracking-tighter uppercase sm:block hidden">
               <span className="text-white">Vibe</span>
@@ -53,12 +53,12 @@ function App() {
       <main>
         <Hero />
         <div className="relative">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-accent/10 blur-[150px] -z-10 rounded-full" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[250px] md:h-[500px] bg-accent/10 blur-[60px] md:blur-[150px] -z-10 rounded-full" />
           <ToolGrid />
         </div>
       </main>
 
-      <footer className="relative py-20 px-6 border-t border-white/5 text-center text-slate-500 text-[10px] font-mono uppercase tracking-[0.3em]">
+      <footer className="relative py-10 md:py-20 px-4 md:px-6 border-t border-white/5 text-center text-slate-500 text-[10px] font-mono uppercase tracking-[0.2em] md:tracking-[0.3em]">
         <div className="mb-4">SYS_VER_OCTOKIT_DISCOVERY_4.14.26</div>
         <div>
           Desenvolvido pelo time{" "}

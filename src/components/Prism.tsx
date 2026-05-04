@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Renderer, Triangle, Program, Mesh } from 'ogl';
 
 interface PrismProps {
@@ -19,6 +19,8 @@ interface PrismProps {
   timeScale?: number;
 }
 
+const isMobile = () => typeof window !== 'undefined' && (window.innerWidth < 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+
 const Prism: React.FC<PrismProps> = ({
   height = 3.5,
   baseWidth = 5.5,
@@ -37,6 +39,7 @@ const Prism: React.FC<PrismProps> = ({
   timeScale = 0.5
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -56,7 +59,8 @@ const Prism: React.FC<PrismProps> = ({
     const HOVSTR = Math.max(0, hoverStrength || 1);
     const INERT = Math.max(0, Math.min(1, inertia || 0.12));
 
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const mobile = isMobile();
+    const dpr = mobile ? 1 : Math.min(2, window.devicePixelRatio || 1);
     const renderer = new Renderer({
       dpr,
       alpha: transparent,
@@ -142,7 +146,7 @@ const Prism: React.FC<PrismProps> = ({
         vec3 col = vec3(0.0);
         float t = 0.0;
         
-        for(int i = 0; i < 64; i++) {
+        for(int i = 0; i < RAY_STEPS; i++) {
           vec3 p = ro + rd * t;
           p *= uRot;
           
@@ -163,9 +167,10 @@ const Prism: React.FC<PrismProps> = ({
     `;
 
     const geometry = new Triangle(gl);
+    const raySteps = mobile ? 32 : 64;
     const program = new Program(gl, {
       vertex,
-      fragment,
+      fragment: fragment.replace('RAY_STEPS', String(raySteps)),
       uniforms: {
         iResolution: { value: [0, 0] },
         iTime: { value: 0 },
@@ -187,14 +192,28 @@ const Prism: React.FC<PrismProps> = ({
     const mesh = new Mesh(gl, { geometry, program });
 
     let animationId: number;
+    let isOffscreen = false;
     const mouse = { x: 0, y: 0 };
     const targetMouse = { x: 0, y: 0 };
+    const targetFps = mobile ? 30 : 60;
+    const frameInterval = 1000 / targetFps;
+    let lastFrameTime = 0;
 
     const onMouseMove = (e: MouseEvent) => {
       targetMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       targetMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
     window.addEventListener('mousemove', onMouseMove);
+
+    // IntersectionObserver to pause rendering when offscreen
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isOffscreen = !entry.isIntersecting;
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    if (container) observer.observe(container);
 
     function resize() {
       const { clientWidth, clientHeight } = container!;
@@ -206,6 +225,13 @@ const Prism: React.FC<PrismProps> = ({
 
     function update(time: number) {
       animationId = requestAnimationFrame(update);
+
+      // Skip frame if offscreen or frame rate limiting
+      if (isOffscreen) return;
+      const elapsed = time - lastFrameTime;
+      if (elapsed < frameInterval) return;
+      lastFrameTime = time - (elapsed % frameInterval);
+
       const t = time * 0.001 * TS;
       
       mouse.x += (targetMouse.x - mouse.x) * INERT;
@@ -242,6 +268,7 @@ const Prism: React.FC<PrismProps> = ({
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
+      observer.disconnect();
       cancelAnimationFrame(animationId);
       if (container && container.contains(gl.canvas)) {
         container.removeChild(gl.canvas);
@@ -250,7 +277,7 @@ const Prism: React.FC<PrismProps> = ({
     };
   }, [height, baseWidth, animationType, glow, offset?.x, offset?.y, noise, transparent, scale, hueShift, colorFrequency, hoverStrength, inertia, bloom, suspendWhenOffscreen, timeScale]);
 
-  return <div className="w-full h-full relative" ref={containerRef} />;
+  return <div className="w-full h-full relative" ref={containerRef} style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.3s' }} />;
 };
 
 export default Prism;
