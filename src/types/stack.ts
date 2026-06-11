@@ -27,6 +27,7 @@ export interface TranslationCache {
 
 export interface DiscoveryItem extends StackItem {
   stars: number;
+  forks?: number;
   translatedDesc?: string;
   translationLang?: string;
   originalLang?: string;

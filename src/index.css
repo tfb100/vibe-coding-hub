@@ -66,6 +66,15 @@
     animation: float 6s ease-in-out infinite;
   }
 
+  @keyframes shine {
+    0% { transform: translateX(-150%) skewX(-20deg); }
+    100% { transform: translateX(200%) skewX(-20deg); }
+  }
+  
+  .animate-shine {
+    animation: shine 4s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }

@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, useMemo } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ArrowUpRight, Activity, Globe } from 'lucide-react';
+import { ArrowUpRight, Activity, Globe, Flame, GitFork } from 'lucide-react';
 import type { StackItem, DiscoveryItem } from '../types/stack';
 
 interface ToolCardProps {
@@ -46,12 +46,18 @@ const ToolCard: React.FC<ToolCardProps> = ({ item, stars }) => {
     mouseY.set(0);
   }, [mouseX, mouseY]);
 
+  const isHot = 'forks' in item && item.forks !== undefined && item.forks > 500;
+
   return (
     <motion.div 
       ref={cardRef}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className="group relative h-full glass-premium rounded-xl md:rounded-2xl p-5 md:p-7 border border-white/5 hover:border-accent/80 bg-slate-950/20 spotlight-container overflow-visible hover:shadow-[0_0_60px_-15px_rgba(31,111,235,0.5)] transition-colors duration-500"
+      className={`group relative h-full glass-premium rounded-xl md:rounded-2xl p-5 md:p-7 border bg-slate-950/20 spotlight-container overflow-visible transition-colors duration-500 ${
+        isHot 
+          ? 'border-orange-500/40 hover:border-red-500/80 shadow-[0_0_30px_rgba(249,115,22,0.15)] hover:shadow-[0_0_60px_-10px_rgba(239,68,68,0.5)] backdrop-blur-2xl' 
+          : 'border-white/5 hover:border-accent/80 hover:shadow-[0_0_60px_-15px_rgba(31,111,235,0.5)]'
+      }`}
       style={{ rotateX, rotateY, transformStyle: IS_TOUCH ? 'flat' : 'preserve-3d' }}
       variants={{
         hidden: { opacity: 0, y: 30 },
@@ -59,9 +65,16 @@ const ToolCard: React.FC<ToolCardProps> = ({ item, stars }) => {
       }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Blue Background Glow - reduced on mobile */}
-      <div className="absolute -inset-4 bg-accent/20 blur-[30px] md:blur-[60px] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-1000 -z-20 pointer-events-none" />
-      <div className="absolute -inset-1 bg-gradient-to-b from-accent/0 via-accent/10 to-accent/50 blur-xl md:blur-3xl rounded-3xl opacity-0 group-hover:opacity-100 transition-all duration-1000 -z-20 pointer-events-none" />
+      {/* Background Glow - changes color if hot */}
+      <div className={`absolute -inset-4 blur-[30px] md:blur-[60px] rounded-full transition-all duration-1000 -z-20 pointer-events-none ${isHot ? 'bg-orange-500/20 opacity-30 group-hover:opacity-100' : 'bg-accent/20 opacity-0 group-hover:opacity-100'}`} />
+      <div className={`absolute -inset-1 blur-xl md:blur-3xl rounded-3xl transition-all duration-1000 -z-20 pointer-events-none ${isHot ? 'bg-gradient-to-br from-red-500/30 via-orange-400/20 to-transparent opacity-50 group-hover:opacity-100' : 'bg-gradient-to-b from-accent/0 via-accent/10 to-accent/50 opacity-0 group-hover:opacity-100'}`} />
+      
+      {/* Efeito de Reflexo de Vidro Animado Continuo */}
+      {isHot && (
+        <div className="absolute inset-0 rounded-xl md:rounded-2xl overflow-hidden pointer-events-none z-0">
+           <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shine mix-blend-overlay" />
+        </div>
+      )}
       
       {/* Spotlight Dynamic Glow */}
       <div className="spotlight-glow" />
@@ -70,8 +83,13 @@ const ToolCard: React.FC<ToolCardProps> = ({ item, stars }) => {
       <div style={{ transform: 'translateZ(20px)' }} className="relative z-10 h-full flex flex-col">
         <div className="flex justify-between items-start mb-6 w-full">
           <div />
-          <div className="flex gap-2">
-            {item.isNew && (
+          <div className="flex gap-2 flex-wrap justify-end">
+            {isHot && (
+              <span className="flex items-center gap-1 text-[10px] font-black text-white px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.5)] border border-white/20 uppercase tracking-widest animate-pulse z-10">
+                <Flame size={10} /> HOT
+              </span>
+            )}
+            {item.isNew && !isHot && (
               <span className="text-[10px] font-black text-white px-3 py-1 rounded-lg bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)] animate-pulse">
                 LATEST
               </span>
@@ -84,7 +102,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ item, stars }) => {
           </div>
         </div>
 
-        <h3 className="text-lg md:text-2xl font-bold font-heading text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-accent transition-all duration-300 mb-3">
+        <h3 className={`relative z-10 text-lg md:text-2xl font-bold font-heading text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r transition-all duration-300 mb-3 ${isHot ? 'group-hover:from-red-300 group-hover:to-orange-400' : 'group-hover:from-white group-hover:to-accent'}`}>
           {item.name}
         </h3>
 
@@ -117,8 +135,15 @@ const ToolCard: React.FC<ToolCardProps> = ({ item, stars }) => {
             <span className="text-[10px] font-mono text-slate-600 uppercase tracking-tighter flex items-center gap-1">
               {formatStars ? (
                 <>
-                  <Activity size={10} className="text-accent/60" />
-                  {formatStars} GitHub Stars
+                  <Activity size={10} className={isHot ? "text-red-400" : "text-accent/60"} />
+                  {formatStars} Stars
+                  {'forks' in item && item.forks !== undefined && (
+                    <>
+                      <span className="mx-1 opacity-30">•</span>
+                      <GitFork size={10} className={isHot ? "text-orange-400" : "text-accent/60"} />
+                      {item.forks >= 1000 ? `${(item.forks / 1000).toFixed(1)}k` : item.forks} Forks
+                    </>
+                  )}
                 </>
               ) : 'Stack Intel'}
             </span>
@@ -150,7 +175,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ item, stars }) => {
 
       {/* Extra floating glow - hidden on touch devices for performance */}
       {!IS_TOUCH && (
-        <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-br from-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+        <div className={`absolute -inset-[1px] rounded-2xl bg-gradient-to-br transition-opacity duration-700 pointer-events-none ${isHot ? 'from-red-500/40 via-orange-400/20 opacity-30 group-hover:opacity-100' : 'from-accent/20 opacity-0 group-hover:opacity-100'} to-transparent z-0`} />
       )}
     </motion.div>
   );

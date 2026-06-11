@@ -81,7 +81,7 @@ export function useVibeTrends() {
               // Respeita o rate limit: se restam menos de 10 requests, para
               const remaining = parseInt(headers['x-ratelimit-remaining'] ?? '60', 10);
               if (remaining < 5) {
-                break; // Parar de buscar estrelas, mas não cancelar o resto
+                return; // Parar de buscar estrelas, mas não cancelar o resto
               }
             } catch (err) {
               // Silencia 403/429 (rate limit) sem poluir o console
@@ -145,7 +145,7 @@ export function useVibeTrends() {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           searchData.items.map(async (repo: any) => {
             const originalDesc = repo.description || 'Tecnologia emergente detectada pela Vibe Engine.';
-            const { detectedLang, langLabel } = getLanguageInfo(originalDesc);
+            const { detectedLang } = getLanguageInfo(originalDesc);
             const translatedDesc = await translateToPortuguese(originalDesc, repo.full_name);
             
             return {
