@@ -52,10 +52,6 @@ export function useGithubTrends() {
         // Datas
         const now = new Date();
         
-        const lastWeek = new Date(now);
-        lastWeek.setDate(lastWeek.getDate() - 7);
-        const lastWeekStr = lastWeek.toISOString().split('T')[0];
-
         const lastMonth = new Date(now);
         lastMonth.setMonth(lastMonth.getMonth() - 1);
         const lastMonthStr = lastMonth.toISOString().split('T')[0];

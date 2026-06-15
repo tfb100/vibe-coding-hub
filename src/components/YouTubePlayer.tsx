@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Music2, ChevronDown, Play, Pause, Volume2, VolumeX, X, Tv } from 'lucide-react';
 
 const VIDEO_ID = '54hoKbTWon4';
