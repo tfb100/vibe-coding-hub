@@ -4,6 +4,7 @@ import { GitBranch } from 'lucide-react';
 import Prism from './components/Prism';
 import HomePage from './pages/HomePage';
 import GithubTrendsPage from './pages/GithubTrendsPage';
+import YouTubePlayer from './components/YouTubePlayer';
 
 function App() {
   const { scrollYProgress } = useScroll();
@@ -75,6 +76,9 @@ function App() {
           <Route path="/github" element={<GithubTrendsPage />} />
         </Routes>
       </main>
+
+      {/* Player de Música Global - visível em todas as páginas */}
+      <YouTubePlayer />
 
       <footer className="relative py-10 md:py-20 px-4 md:px-6 border-t border-white/5 text-center text-slate-500 text-[10px] font-mono uppercase tracking-[0.2em] md:tracking-[0.3em]">
         <div className="mb-4">SYS_VER_OCTOKIT_DISCOVERY_4.14.26</div>

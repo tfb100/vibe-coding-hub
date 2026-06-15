@@ -11,14 +11,14 @@ async function getOctokit() {
   return octokitInstance;
 }
 
-const CACHE_KEY = 'vibe_hub_github_trends_v5';
+const CACHE_KEY = 'vibe_hub_github_trends_v8';
 const CACHE_TTL = 1000 * 60 * 60; // 1 hora
 const DISCOVERY_LIMIT = 24;
 
 export function useGithubTrends() {
-  const [daily, setDaily] = useState<DiscoveryItem[]>([]);
-  const [weekly, setWeekly] = useState<DiscoveryItem[]>([]);
-  const [newReleases, setNewReleases] = useState<DiscoveryItem[]>([]);
+  const [trending, setTrending] = useState<DiscoveryItem[]>([]);
+  const [established, setEstablished] = useState<DiscoveryItem[]>([]);
+  const [hotReleases, setHotReleases] = useState<DiscoveryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,11 +36,11 @@ export function useGithubTrends() {
     async function fetchGithubTrends() {
       const cached = localStorage.getItem(CACHE_KEY);
       if (cached) {
-        const { daily: cachedDaily, weekly: cachedWeekly, newReleases: cachedNewReleases, timestamp } = JSON.parse(cached);
+        const { trending: cachedTrending, established: cachedEstablished, hotReleases: cachedHotReleases, timestamp } = JSON.parse(cached);
         if (Date.now() - timestamp < CACHE_TTL) {
-          setDaily(cachedDaily);
-          setWeekly(cachedWeekly);
-          setNewReleases(cachedNewReleases || []);
+          setTrending(cachedTrending || []);
+          setEstablished(cachedEstablished || []);
+          setHotReleases(cachedHotReleases || []);
           setLoading(false);
           return;
         }
@@ -52,10 +52,6 @@ export function useGithubTrends() {
         // Datas
         const now = new Date();
         
-        const yesterday = new Date(now);
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().split('T')[0];
-
         const lastWeek = new Date(now);
         lastWeek.setDate(lastWeek.getDate() - 7);
         const lastWeekStr = lastWeek.toISOString().split('T')[0];
@@ -64,50 +60,54 @@ export function useGithubTrends() {
         lastMonth.setMonth(lastMonth.getMonth() - 1);
         const lastMonthStr = lastMonth.toISOString().split('T')[0];
 
-        // 1. Fetch Daily
-        let dailyData = { items: [] as any[] };
+        const last6Months = new Date(now);
+        last6Months.setMonth(last6Months.getMonth() - 6);
+        const last6MonthsStr = last6Months.toISOString().split('T')[0];
+
+        // 1. Fetch Hot Releases (Lançamentos Bombando)
+        let hotReleasesData = { items: [] as any[] };
         try {
           const res = await octokit.search.repos({
-            q: `stars:>1000 pushed:>${yesterdayStr} language:TypeScript language:JavaScript`,
+            q: `stars:>500 created:>${lastMonthStr} language:TypeScript language:JavaScript`,
             sort: 'stars',
             order: 'desc',
             per_page: DISCOVERY_LIMIT
           });
-          dailyData = res.data;
+          hotReleasesData = res.data;
         } catch (e) {
-          console.warn('Failed to fetch daily trends', e);
+          console.warn('Failed to fetch hot releases', e);
         }
 
         if (cancelled) return;
 
-        // 2. Fetch Weekly
-        let weeklyData = { items: [] as any[] };
+        // 2. Fetch Established (Consolidados)
+        let establishedData = { items: [] as any[] };
         try {
           const res = await octokit.search.repos({
-            q: `stars:>1000 pushed:>${lastWeekStr} language:TypeScript language:JavaScript`,
+            q: `stars:>10000 pushed:>${last6MonthsStr} language:TypeScript language:JavaScript`,
             sort: 'stars',
             order: 'desc',
             per_page: DISCOVERY_LIMIT
           });
-          weeklyData = res.data;
+          establishedData = res.data;
         } catch (e) {
-          console.warn('Failed to fetch weekly trends', e);
+          console.warn('Failed to fetch established trends', e);
         }
 
         if (cancelled) return;
 
-        // 3. Fetch New Releases (>1000 stars, created last month)
-        let newReleasesData = { items: [] as any[] };
+        // 3. Fetch Trending (Em Alta no Dia a Dia)
+        let trendingData = { items: [] as any[] };
         try {
           const res = await octokit.search.repos({
-            q: `stars:>1000 created:>${lastMonthStr} language:TypeScript language:JavaScript`,
+            q: `stars:1000..10000 pushed:>${lastMonthStr} language:TypeScript language:JavaScript`,
             sort: 'stars',
             order: 'desc',
             per_page: DISCOVERY_LIMIT
           });
-          newReleasesData = res.data;
+          trendingData = res.data;
         } catch (e) {
-          console.warn('Failed to fetch new releases', e);
+          console.warn('Failed to fetch trending repos', e);
         }
 
         if (cancelled) return;
@@ -137,20 +137,24 @@ export function useGithubTrends() {
           );
         };
 
-        const dailyItems = await processItems(dailyData.items);
-        const weeklyItems = await processItems(weeklyData.items);
-        const newReleasesItems = await processItems(newReleasesData.items);
+        const sortItems = (items: any[]) => {
+          return items.sort((a, b) => b.stars - a.stars || b.forks - a.forks);
+        };
+
+        const hotReleasesItems = sortItems(await processItems(hotReleasesData.items));
+        const establishedItems = sortItems(await processItems(establishedData.items));
+        const trendingItems = sortItems(await processItems(trendingData.items));
 
         if (cancelled) return;
         
-        setDaily(dailyItems);
-        setWeekly(weeklyItems);
-        setNewReleases(newReleasesItems);
+        setHotReleases(hotReleasesItems);
+        setEstablished(establishedItems);
+        setTrending(trendingItems);
 
         localStorage.setItem(CACHE_KEY, JSON.stringify({
-          daily: dailyItems,
-          weekly: weeklyItems,
-          newReleases: newReleasesItems,
+          hotReleases: hotReleasesItems,
+          established: establishedItems,
+          trending: trendingItems,
           timestamp: Date.now()
         }));
 
@@ -168,5 +172,5 @@ export function useGithubTrends() {
     };
   }, []);
 
-  return { daily, weekly, newReleases, loading };
+  return { trending, established, hotReleases, loading };
 }

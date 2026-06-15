@@ -6,12 +6,14 @@ import type { StackItem, DiscoveryItem } from '../types/stack';
 interface ToolCardProps {
   item: StackItem | DiscoveryItem;
   stars?: number;
+  rank?: number;
+  onClick?: () => void;
 }
 
 // Computed once at module level, not on every render
 const IS_TOUCH = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
-const ToolCard: React.FC<ToolCardProps> = ({ item, stars }) => {
+const ToolCard: React.FC<ToolCardProps> = ({ item, stars, rank, onClick }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const formatStars = useMemo(() => {
@@ -53,7 +55,8 @@ const ToolCard: React.FC<ToolCardProps> = ({ item, stars }) => {
       ref={cardRef}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className={`group relative h-full glass-premium rounded-xl md:rounded-2xl p-5 md:p-7 border bg-slate-950/20 spotlight-container overflow-visible transition-colors duration-500 ${
+      onClick={onClick}
+      className={`group relative h-full glass-premium rounded-xl md:rounded-2xl p-5 md:p-7 border bg-slate-950/20 spotlight-container overflow-visible transition-colors duration-500 ${onClick ? 'cursor-pointer' : ''} ${
         isHot 
           ? 'border-orange-500/40 hover:border-red-500/80 shadow-[0_0_30px_rgba(249,115,22,0.15)] hover:shadow-[0_0_60px_-10px_rgba(239,68,68,0.5)] backdrop-blur-2xl' 
           : 'border-white/5 hover:border-accent/80 hover:shadow-[0_0_60px_-15px_rgba(31,111,235,0.5)]'
@@ -82,7 +85,18 @@ const ToolCard: React.FC<ToolCardProps> = ({ item, stars }) => {
       {/* Card Content with 3D Pop (TranslateZ) */}
       <div style={{ transform: 'translateZ(20px)' }} className="relative z-10 h-full flex flex-col">
         <div className="flex justify-between items-start mb-6 w-full">
-          <div />
+          <div>
+            {rank !== undefined && (
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full text-xs font-black shadow-lg border ${
+                rank === 1 ? 'bg-gradient-to-br from-yellow-300 to-yellow-600 text-yellow-950 border-yellow-400 shadow-yellow-500/50' :
+                rank === 2 ? 'bg-gradient-to-br from-slate-300 to-slate-500 text-slate-900 border-slate-300 shadow-slate-400/50' :
+                rank === 3 ? 'bg-gradient-to-br from-amber-600 to-amber-800 text-amber-100 border-amber-600 shadow-amber-700/50' :
+                'bg-white/10 text-white border-white/20'
+              }`}>
+                #{rank}
+              </div>
+            )}
+          </div>
           <div className="flex gap-2 flex-wrap justify-end">
             {isHot && (
               <span className="flex items-center gap-1 text-[10px] font-black text-white px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.5)] border border-white/20 uppercase tracking-widest animate-pulse z-10">
