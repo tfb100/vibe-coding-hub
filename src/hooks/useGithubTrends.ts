@@ -11,9 +11,9 @@ async function getOctokit() {
   return octokitInstance;
 }
 
-const CACHE_KEY = 'vibe_hub_github_trends_v8';
+const CACHE_KEY = 'vibe_hub_github_trends_v9';
 const CACHE_TTL = 1000 * 60 * 60; // 1 hora
-const DISCOVERY_LIMIT = 24;
+const DISCOVERY_LIMIT = 50;
 
 export function useGithubTrends() {
   const [trending, setTrending] = useState<DiscoveryItem[]>([]);
