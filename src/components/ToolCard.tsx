@@ -177,6 +177,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ item, stars, rank, onClick }) => {
                 href={item.link || item.doc} 
                 target="_blank" 
                 rel="noopener noreferrer" 
+                onClick={(e) => e.stopPropagation()}
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:bg-accent hover:text-white hover:border-accent transition-all duration-500 scale-90 group-hover:scale-100 shadow-xl"
                 title={item.docLabel || 'Ver Documentação'}
               >
